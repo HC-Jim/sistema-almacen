@@ -7,7 +7,8 @@
 
 <section class="opciones-menu">
   @for (o of opciones(); track o.ruta) {
-    <a class="opcion" [routerLink]="['/', datos().id, o.ruta]">
+    <!-- Texto y no arreglo: en un arreglo "ventas/nueva" sería un solo segmento ("ventas%2Fnueva") -->
+    <a class="opcion" [routerLink]="'/' + datos().id + '/' + o.ruta">
       <strong>{{ o.titulo }}</strong>
       <span class="muted">{{ o.detalle }}</span>
     </a>
