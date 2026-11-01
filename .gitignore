@@ -1,0 +1,15 @@
+# Archivos personales que no son parte del proyecto
+Nueva carpeta/
+
+# Configuración local de herramientas
+.claude/
+.idea/
+*.iml
+
+# Sistema operativo
+Thumbs.db
+.DS_Store
+desktop.ini
+
+# Variables de entorno locales (contraseñas)
+.env

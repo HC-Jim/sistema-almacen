@@ -1,0 +1,137 @@
+<div class="pagina-titulo">
+  <div>
+    <h1>Registrar venta</h1>
+    <p class="subtitulo">Egreso de mercadería. El precio se toma del precio de venta vigente de cada producto.</p>
+  </div>
+  <a routerLink="/ventas" class="btn btn-sec">Ver ventas</a>
+</div>
+
+@if (registrada(); as r) {
+  <p class="exito">
+    Venta registrada: <strong>{{ r.tipoComprobante }} {{ r.numeroComprobante }}</strong> (correlativo
+    {{ r.correlativo }}) — DNI {{ r.clienteDni }} — {{ r.medioPago }} — Total
+    <strong>S/ {{ r.total | number: '1.2-2' }}</strong>.
+  </p>
+}
+@if (error()) {
+  <p class="alerta">{{ error() }}</p>
+}
+
+<form [formGroup]="form" (ngSubmit)="registrar()">
+  <section class="tarjeta">
+    <h2>Comprobante y cliente</h2>
+    <div class="form-grid">
+      <label>
+        Almacén de despacho
+        <select formControlName="almacenId">
+          @for (a of almacenes(); track a.id) {
+            <option [ngValue]="a.id">{{ a.codigo }} — {{ a.nombre }}</option>
+          }
+        </select>
+      </label>
+
+      <label>
+        Tipo de comprobante
+        <select formControlName="tipoComprobante">
+          @for (t of tiposComprobante; track t) {
+            <option [ngValue]="t">{{ t }}</option>
+          }
+        </select>
+      </label>
+
+      <label>
+        DNI del cliente
+        <input formControlName="clienteDni" maxlength="8" inputmode="numeric" placeholder="8 dígitos" />
+        @if (form.controls.clienteDni.touched && form.controls.clienteDni.invalid) {
+          <small class="invalido">El DNI debe tener 8 dígitos.</small>
+        }
+      </label>
+
+      <label>
+        Nombre del cliente (opcional)
+        <input formControlName="clienteNombre" maxlength="120" />
+      </label>
+
+      <label>
+        Medio de pago
+        <select formControlName="medioPago">
+          @for (m of mediosPago; track m) {
+            <option [ngValue]="m">{{ m }}</option>
+          }
+        </select>
+      </label>
+
+      <label>
+        Observación (opcional)
+        <input formControlName="observacion" maxlength="255" />
+      </label>
+    </div>
+  </section>
+
+  <section class="tarjeta">
+    <h2>Productos</h2>
+    <div class="tabla-scroll">
+      <table formArrayName="items">
+        <thead>
+          <tr>
+            <th>Producto</th>
+            <th class="num">Disponible</th>
+            <th class="num">Precio</th>
+            <th class="num">Cantidad</th>
+            <th class="num">Subtotal</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (linea of items.controls; track linea; let i = $index) {
+            <tr [formGroupName]="i">
+              <td>
+                <select formControlName="productoId">
+                  <option [ngValue]="null" disabled>Seleccione…</option>
+                  @for (p of productos(); track p.id) {
+                    <option [ngValue]="p.id">{{ p.codigo }} — {{ p.nombre }}</option>
+                  }
+                </select>
+              </td>
+              <td class="num">{{ producto(i) ? disponible(i) : '—' }}</td>
+              <td class="num">
+                @if (producto(i); as p) {
+                  S/ {{ p.precio | number: '1.2-2' }}
+                } @else {
+                  —
+                }
+              </td>
+              <td class="num">
+                <input class="celda-input num" type="number" min="1" formControlName="cantidad" />
+                @if (excede(i)) {
+                  <small class="etiqueta etiqueta-llena">Supera el stock</small>
+                }
+              </td>
+              <td class="num">S/ {{ subtotal(i) | number: '1.2-2' }}</td>
+              <td class="num">
+                <button type="button" class="btn btn-sec btn-chico" (click)="quitarLinea(i)" [disabled]="items.length === 1">
+                  Quitar
+                </button>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+
+    <div class="acciones">
+      <button type="button" class="btn btn-sec" (click)="agregarLinea()">+ Agregar producto</button>
+    </div>
+
+    <div class="total-linea">
+      <span>Total a cobrar:</span>
+      <span>S/ {{ total() | number: '1.2-2' }}</span>
+    </div>
+  </section>
+
+  <div class="acciones">
+    <button type="submit" class="btn" [disabled]="guardando()">
+      {{ guardando() ? 'Registrando…' : 'Registrar venta' }}
+    </button>
+  </div>
+</form>

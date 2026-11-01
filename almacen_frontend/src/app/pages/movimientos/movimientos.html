@@ -1,0 +1,143 @@
+<div class="pagina-titulo">
+  <div>
+    <h1>{{ titulo() }}</h1>
+    <p class="subtitulo">Haga clic en "Ver" para ver los productos de cada movimiento.</p>
+  </div>
+  @if (rutaNueva(); as ruta) {
+    <a [routerLink]="ruta" class="btn">+ Registrar</a>
+  }
+</div>
+
+<section class="tarjeta">
+  <div class="form-grid">
+    @if (tipo() === null) {
+      <label>
+        Tipo
+        <select [(ngModel)]="filtroTipo">
+          <option value="">Todos</option>
+          <option value="COMPRA">Compras</option>
+          <option value="VENTA">Ventas</option>
+          <option value="TRASLADO">Traslados</option>
+        </select>
+      </label>
+    }
+    <label>
+      Almacén
+      <select [(ngModel)]="filtroAlmacen">
+        <option value="">Todos</option>
+        @for (a of almacenes(); track a.id) {
+          <option [ngValue]="a.id">{{ a.codigo }} — {{ a.nombre }}</option>
+        }
+      </select>
+    </label>
+    <label>
+      Desde
+      <input type="date" [(ngModel)]="desde" />
+    </label>
+    <label>
+      Hasta
+      <input type="date" [(ngModel)]="hasta" />
+    </label>
+  </div>
+  <div class="acciones">
+    <button type="button" class="btn" (click)="buscar()">Buscar</button>
+    <button type="button" class="btn btn-sec" (click)="limpiarFiltros()">Limpiar</button>
+  </div>
+</section>
+
+@if (error()) {
+  <p class="alerta">{{ error() }}</p>
+}
+
+<section class="tarjeta tabla-scroll">
+  @if (cargando()) {
+    <p>Cargando…</p>
+  } @else {
+    <table>
+      <thead>
+        <tr>
+          <th>Fecha</th>
+          <th>Correlativo</th>
+          @if (tipo() === null) {
+            <th>Tipo</th>
+          }
+          <th>Documento</th>
+          <th>Almacén</th>
+          <th>{{ columnaTercero() }}</th>
+          <th class="num">Total</th>
+          <th>Usuario</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (m of movimientos(); track m.id) {
+          <tr>
+            <td>{{ m.fecha | date: 'dd/MM/yyyy HH:mm' }}</td>
+            <td><strong>{{ m.correlativo }}</strong></td>
+            @if (tipo() === null) {
+              <td><span class="etiqueta" [class.etiqueta-llena]="m.tipo === 'VENTA'">{{ m.tipo }}</span></td>
+            }
+            <td>{{ documento(m) }}</td>
+            <td>{{ almacen(m) }}</td>
+            <td>{{ tercero(m) }}</td>
+            <td class="num">S/ {{ m.total | number: '1.2-2' }}</td>
+            <td class="muted">{{ m.usuario }}</td>
+            <td class="num">
+              <button type="button" class="btn btn-sec btn-chico" (click)="alternar(m.id)">
+                {{ abiertos().has(m.id) ? 'Ocultar' : 'Ver' }}
+              </button>
+            </td>
+          </tr>
+          @if (abiertos().has(m.id)) {
+            <tr class="detalle">
+              <td [attr.colspan]="tipo() === null ? 9 : 8">
+                <table>
+                  <thead>
+                    <tr>
+                      <th>Producto</th>
+                      <th class="num">Cantidad</th>
+                      <th class="num">Costo unit.</th>
+                      @if (m.tipo === 'VENTA') {
+                        <th class="num">Precio unit.</th>
+                      }
+                      <th class="num">Subtotal</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    @for (d of m.detalles; track d.productoId) {
+                      <tr>
+                        <td>{{ d.productoCodigo }} — {{ d.productoNombre }}</td>
+                        <td class="num">{{ d.cantidad }}</td>
+                        <td class="num">S/ {{ d.costoUnitario | number: '1.2-4' }}</td>
+                        @if (m.tipo === 'VENTA') {
+                          <td class="num">S/ {{ d.precioUnitario | number: '1.2-2' }}</td>
+                        }
+                        <td class="num">S/ {{ d.subtotal | number: '1.2-2' }}</td>
+                      </tr>
+                    }
+                  </tbody>
+                </table>
+                @if (m.observacion && m.tipo !== 'TRASLADO') {
+                  <p class="muted">Observación: {{ m.observacion }}</p>
+                }
+              </td>
+            </tr>
+          }
+        } @empty {
+          <tr>
+            <td [attr.colspan]="tipo() === null ? 9 : 8" class="vacio">No hay movimientos con estos filtros.</td>
+          </tr>
+        }
+      </tbody>
+      @if (movimientos().length) {
+        <tfoot>
+          <tr>
+            <td [attr.colspan]="tipo() === null ? 6 : 5">{{ movimientos().length }} registro(s)</td>
+            <td class="num">S/ {{ total() | number: '1.2-2' }}</td>
+            <td colspan="2"></td>
+          </tr>
+        </tfoot>
+      }
+    </table>
+  }
+</section>

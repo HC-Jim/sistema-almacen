@@ -1,0 +1,299 @@
+/* ==========================================================
+   Estilos globales — tema blanco y negro
+   ========================================================== */
+:root {
+  --negro: #111;
+  --gris-oscuro: #444;
+  --gris: #888;
+  --gris-claro: #d9d9d9;
+  --gris-fondo: #f4f4f4;
+  --blanco: #fff;
+  --radio: 4px;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  height: 100%;
+}
+
+body {
+  font-family: system-ui, -apple-system, 'Segoe UI', Roboto, Arial, sans-serif;
+  font-size: 14px;
+  color: var(--negro);
+  background: var(--gris-fondo);
+}
+
+h1 {
+  font-size: 1.4rem;
+  margin: 0 0 4px;
+}
+
+h2 {
+  font-size: 1.05rem;
+  margin: 0 0 12px;
+}
+
+a {
+  color: var(--negro);
+}
+
+/* ---------- Encabezado de página ---------- */
+.pagina-titulo {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-bottom: 16px;
+}
+
+.subtitulo {
+  margin: 0;
+  color: var(--gris-oscuro);
+}
+
+/* ---------- Tarjetas ---------- */
+.tarjeta {
+  background: var(--blanco);
+  border: 1px solid var(--gris-claro);
+  border-radius: var(--radio);
+  padding: 16px 20px;
+  margin-bottom: 16px;
+}
+
+/* ---------- Formularios ---------- */
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
+  gap: 12px 16px;
+}
+
+.ancho-total {
+  grid-column: 1 / -1;
+}
+
+label {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+input,
+select,
+textarea {
+  font: inherit;
+  font-weight: 400;
+  padding: 7px 9px;
+  border: 1px solid var(--gris);
+  border-radius: var(--radio);
+  background: var(--blanco);
+  color: var(--negro);
+  width: 100%;
+}
+
+input:focus,
+select:focus,
+textarea:focus {
+  outline: 2px solid var(--negro);
+  outline-offset: 0;
+}
+
+input[readonly] {
+  background: var(--gris-fondo);
+}
+
+.opciones {
+  display: flex;
+  gap: 16px;
+  align-items: center;
+  min-height: 34px;
+}
+
+.opciones label {
+  flex-direction: row;
+  align-items: center;
+  font-weight: 400;
+}
+
+.opciones input {
+  width: auto;
+}
+
+.invalido {
+  color: var(--negro);
+  font-weight: 400;
+  font-style: italic;
+}
+
+/* ---------- Botones ---------- */
+.btn {
+  font: inherit;
+  font-weight: 600;
+  padding: 8px 14px;
+  border: 1px solid var(--negro);
+  border-radius: var(--radio);
+  background: var(--negro);
+  color: var(--blanco);
+  cursor: pointer;
+  text-decoration: none;
+  display: inline-block;
+  white-space: nowrap;
+}
+
+.btn:hover {
+  background: var(--gris-oscuro);
+}
+
+.btn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.btn-sec {
+  background: var(--blanco);
+  color: var(--negro);
+}
+
+.btn-sec:hover {
+  background: var(--gris-fondo);
+}
+
+.btn-chico {
+  padding: 4px 9px;
+  font-size: 0.8rem;
+}
+
+.acciones {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-top: 16px;
+}
+
+/* ---------- Tablas ---------- */
+.tabla-scroll {
+  overflow-x: auto;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  background: var(--blanco);
+}
+
+th,
+td {
+  text-align: left;
+  padding: 8px 10px;
+  border-bottom: 1px solid var(--gris-claro);
+  vertical-align: middle;
+}
+
+th {
+  background: var(--negro);
+  color: var(--blanco);
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  white-space: nowrap;
+}
+
+tbody tr:hover {
+  background: var(--gris-fondo);
+}
+
+tfoot td {
+  font-weight: 700;
+  border-top: 2px solid var(--negro);
+}
+
+.num {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+.vacio {
+  text-align: center;
+  color: var(--gris-oscuro);
+  padding: 20px;
+}
+
+.celda-input {
+  min-width: 90px;
+}
+
+/* ---------- Mensajes ---------- */
+.alerta,
+.exito,
+.aviso {
+  border-radius: var(--radio);
+  padding: 10px 14px;
+  margin: 0 0 16px;
+}
+
+.alerta {
+  background: var(--negro);
+  color: var(--blanco);
+}
+
+.exito {
+  background: var(--blanco);
+  border: 2px solid var(--negro);
+}
+
+.aviso {
+  background: var(--gris-fondo);
+  border: 1px dashed var(--gris-oscuro);
+}
+
+.etiqueta {
+  display: inline-block;
+  padding: 2px 7px;
+  border: 1px solid var(--negro);
+  border-radius: 10px;
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+.etiqueta-llena {
+  background: var(--negro);
+  color: var(--blanco);
+}
+
+.muted {
+  color: var(--gris-oscuro);
+}
+
+.buscador {
+  max-width: 280px;
+}
+
+.rotulo {
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+tr.detalle > td {
+  background: var(--gris-fondo);
+  padding: 10px 16px 14px;
+}
+
+tr.detalle th {
+  background: var(--gris-oscuro);
+}
+
+.total-linea {
+  display: flex;
+  justify-content: flex-end;
+  gap: 16px;
+  font-size: 1.1rem;
+  font-weight: 800;
+  margin-top: 12px;
+}

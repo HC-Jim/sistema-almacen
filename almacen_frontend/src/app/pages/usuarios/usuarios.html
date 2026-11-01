@@ -1,0 +1,116 @@
+<div class="pagina-titulo">
+  <div>
+    <h1>Usuarios</h1>
+    <p class="subtitulo">ADMIN puede todo; VENDEDOR no puede administrar usuarios.</p>
+  </div>
+</div>
+
+@if (error()) {
+  <p class="alerta">{{ error() }}</p>
+}
+@if (exito()) {
+  <p class="exito">{{ exito() }}</p>
+}
+
+<section class="tarjeta">
+  <h2>{{ editandoId() === null ? 'Nuevo usuario' : 'Editar usuario' }}</h2>
+
+  <form [formGroup]="form" (ngSubmit)="guardar()">
+    <div class="form-grid">
+      <label>
+        Usuario
+        <input formControlName="username" maxlength="50" autocomplete="off" />
+        @if (form.controls.username.touched && form.controls.username.invalid) {
+          <small class="invalido">Obligatorio; solo letras, números, punto, guion y guion bajo.</small>
+        }
+      </label>
+
+      <label>
+        Nombre
+        <input formControlName="nombre" maxlength="100" />
+        @if (form.controls.nombre.touched && form.controls.nombre.invalid) {
+          <small class="invalido">El nombre es obligatorio.</small>
+        }
+      </label>
+
+      <label>
+        Rol
+        <select formControlName="rol">
+          @for (r of roles; track r) {
+            <option [value]="r">{{ r }}</option>
+          }
+        </select>
+      </label>
+
+      @if (editandoId() === null) {
+        <label>
+          Contraseña inicial
+          <input type="password" formControlName="password" maxlength="72" autocomplete="new-password" />
+          @if (form.controls.password.touched && form.controls.password.invalid) {
+            <small class="invalido">Mínimo 8 caracteres.</small>
+          }
+        </label>
+      }
+    </div>
+
+    <div class="acciones">
+      <button type="submit" class="btn">{{ editandoId() === null ? 'Crear usuario' : 'Actualizar' }}</button>
+      @if (editandoId() !== null) {
+        <button type="button" class="btn btn-sec" (click)="cancelar()">Cancelar</button>
+      }
+    </div>
+  </form>
+</section>
+
+<section class="tarjeta">
+  <div class="pagina-titulo">
+    <h2>Lista de usuarios</h2>
+    <button type="button" class="btn btn-sec btn-chico" (click)="cargar()">Recargar</button>
+  </div>
+
+  @if (cargando()) {
+    <p>Cargando…</p>
+  } @else {
+    <div class="tabla-scroll">
+      <table>
+        <thead>
+          <tr>
+            <th>Usuario</th>
+            <th>Nombre</th>
+            <th>Rol</th>
+            <th>Estado</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (u of usuarios(); track u.id) {
+            <tr>
+              <td>
+                {{ u.username }}
+                @if (esYo(u)) {
+                  <span class="muted">(usted)</span>
+                }
+              </td>
+              <td>{{ u.nombre }}</td>
+              <td><span class="etiqueta" [class.etiqueta-llena]="u.rol === 'ADMIN'">{{ u.rol }}</span></td>
+              <td [class.muted]="!u.activo">{{ u.activo ? 'Activo' : 'Inactivo' }}</td>
+              <td class="num">
+                <button type="button" class="btn btn-sec btn-chico" (click)="editar(u)">Editar</button>
+                <button type="button" class="btn btn-sec btn-chico" (click)="restablecer(u)">Restablecer contraseña</button>
+                @if (!esYo(u)) {
+                  <button type="button" class="btn btn-chico" (click)="cambiarEstado(u)">
+                    {{ u.activo ? 'Desactivar' : 'Activar' }}
+                  </button>
+                }
+              </td>
+            </tr>
+          } @empty {
+            <tr>
+              <td colspan="5" class="vacio">No hay usuarios.</td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+</section>

@@ -1,0 +1,115 @@
+:host {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.barra {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 20px;
+  background: var(--negro);
+  color: var(--blanco);
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+.marca {
+  color: var(--blanco);
+  text-decoration: none;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+}
+
+.usuario {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 0.85rem;
+}
+
+.cuerpo {
+  display: flex;
+  flex: 1;
+}
+
+.menu {
+  width: 220px;
+  flex-shrink: 0;
+  background: var(--blanco);
+  border-right: 1px solid var(--gris-claro);
+  padding: 12px 0;
+}
+
+.grupo {
+  margin: 14px 18px 4px;
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--gris);
+}
+
+.menu a {
+  display: block;
+  padding: 7px 18px;
+  color: var(--negro);
+  text-decoration: none;
+  border-left: 3px solid transparent;
+}
+
+.menu a:hover {
+  background: var(--gris-fondo);
+}
+
+.menu a.activo {
+  border-left-color: var(--negro);
+  background: var(--gris-fondo);
+  font-weight: 700;
+}
+
+.contenido {
+  flex: 1;
+  min-width: 0;
+  padding: 24px;
+}
+
+@media (max-width: 800px) {
+  .cuerpo {
+    flex-direction: column;
+  }
+
+  .menu {
+    width: 100%;
+    border-right: none;
+    border-bottom: 1px solid var(--gris-claro);
+    display: flex;
+    flex-wrap: wrap;
+    padding: 8px;
+  }
+
+  .grupo {
+    display: none;
+  }
+
+  .menu a {
+    border-left: none;
+    border-bottom: 2px solid transparent;
+    padding: 6px 10px;
+  }
+
+  .menu a.activo {
+    border-bottom-color: var(--negro);
+  }
+
+  .contenido {
+    padding: 16px;
+  }
+
+  .usuario span {
+    display: none;
+  }
+}

@@ -1,0 +1,105 @@
+<div class="pagina-titulo">
+  <div>
+    <h1>Productos</h1>
+    <p class="subtitulo">El stock cambia solo con compras, ventas y traslados. El costo, solo con compras.</p>
+  </div>
+</div>
+
+@if (error()) {
+  <p class="alerta">{{ error() }}</p>
+}
+@if (exito()) {
+  <p class="exito">{{ exito() }}</p>
+}
+
+<section class="tarjeta">
+  <h2>{{ editandoId() === null ? 'Nuevo producto' : 'Editar producto' }}</h2>
+
+  <form [formGroup]="form" (ngSubmit)="guardar()">
+    <div class="form-grid">
+      <label>
+        Código
+        <input formControlName="codigo" maxlength="30" />
+        @if (form.controls.codigo.touched && form.controls.codigo.invalid) {
+          <small class="invalido">El código es obligatorio.</small>
+        }
+      </label>
+
+      <label>
+        Nombre
+        <input formControlName="nombre" maxlength="120" />
+        @if (form.controls.nombre.touched && form.controls.nombre.invalid) {
+          <small class="invalido">El nombre es obligatorio.</small>
+        }
+      </label>
+
+      <label>
+        Precio de venta (S/)
+        <input type="number" formControlName="precio" min="0" step="0.01" />
+      </label>
+
+      <label class="ancho-total">
+        Descripción
+        <input formControlName="descripcion" maxlength="255" />
+      </label>
+    </div>
+
+    <div class="acciones">
+      <button type="submit" class="btn">{{ editandoId() === null ? 'Guardar' : 'Actualizar' }}</button>
+      @if (editandoId() !== null) {
+        <button type="button" class="btn btn-sec" (click)="cancelar()">Cancelar</button>
+      }
+    </div>
+  </form>
+</section>
+
+<section class="tarjeta">
+  <div class="pagina-titulo">
+    <h2>Lista de productos</h2>
+    <button type="button" class="btn btn-sec btn-chico" (click)="cargar()">Recargar</button>
+  </div>
+
+  @if (cargando()) {
+    <p>Cargando…</p>
+  } @else {
+    <div class="tabla-scroll">
+      <table>
+        <thead>
+          <tr>
+            <th>Código</th>
+            <th>Nombre</th>
+            <th>Descripción</th>
+            @for (a of almacenes(); track a.id) {
+              <th class="num">Stock {{ a.codigo }}</th>
+            }
+            <th class="num">Stock total</th>
+            <th class="num">Precio venta</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (p of productos(); track p.id) {
+            <tr>
+              <td>{{ p.codigo }}</td>
+              <td>{{ p.nombre }}</td>
+              <td class="muted">{{ p.descripcion }}</td>
+              @for (a of almacenes(); track a.id) {
+                <td class="num">{{ stockEn(p, a.id) }}</td>
+              }
+              <td class="num"><strong>{{ p.stock }}</strong></td>
+              <td class="num">S/ {{ p.precio | number: '1.2-2' }}</td>
+              <td class="num">
+                <button type="button" class="btn btn-sec btn-chico" (click)="editar(p)">Editar</button>
+                <button type="button" class="btn btn-chico" (click)="eliminar(p)">Eliminar</button>
+              </td>
+            </tr>
+          } @empty {
+            <tr>
+              <td [attr.colspan]="6 + almacenes().length" class="vacio">No hay productos registrados.</td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+</section>

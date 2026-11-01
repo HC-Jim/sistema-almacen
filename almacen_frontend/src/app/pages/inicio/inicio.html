@@ -1,0 +1,36 @@
+<div class="pagina-titulo">
+  <div>
+    <h1>Menú principal</h1>
+    <p class="subtitulo">Bienvenido, {{ auth.sesion()?.nombre }}</p>
+  </div>
+</div>
+
+<section class="resumen">
+  <div class="dato">
+    <span class="valor">{{ productos().length }}</span>
+    <span class="muted">Productos</span>
+  </div>
+  <div class="dato">
+    <span class="valor">{{ stockTotal() | number }}</span>
+    <span class="muted">Unidades en stock</span>
+  </div>
+  @for (a of almacenes(); track a.id) {
+    <div class="dato">
+      <span class="valor">{{ stockAlmacen(a.id) | number }}</span>
+      <span class="muted">Unidades en {{ a.nombre }}</span>
+    </div>
+  }
+  <div class="dato">
+    <span class="valor">S/ {{ valorizado() | number: '1.2-2' }}</span>
+    <span class="muted">Inventario valorizado al costo</span>
+  </div>
+</section>
+
+<section class="opciones-menu">
+  @for (o of opciones; track o.ruta) {
+    <a class="opcion" [routerLink]="o.ruta">
+      <strong>{{ o.titulo }}</strong>
+      <span class="muted">{{ o.detalle }}</span>
+    </a>
+  }
+</section>
