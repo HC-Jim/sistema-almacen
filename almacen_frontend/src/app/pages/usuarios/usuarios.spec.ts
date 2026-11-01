@@ -23,7 +23,7 @@ describe('Usuarios', () => {
   it('lista los usuarios del backend', async () => {
     http.expectOne(`${environment.apiUrl}/usuarios`).flush([
       { id: 1, username: 'admin', nombre: 'Administrador', rol: 'ADMIN', activo: true },
-      { id: 2, username: 'juan', nombre: 'Juan', rol: 'VENDEDOR', activo: false },
+      { id: 2, username: 'juan', nombre: 'Juan', rol: 'COMERCIAL', activo: false },
     ]);
     await fixture.whenStable();
 

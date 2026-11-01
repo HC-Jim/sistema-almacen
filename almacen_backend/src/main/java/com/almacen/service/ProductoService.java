@@ -15,6 +15,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
@@ -50,6 +51,7 @@ public class ProductoService {
         Producto producto = new Producto();
         copiar(request, producto);
         producto.setStock(0);
+        producto.setPrecio(BigDecimal.ZERO);
         return ProductoResponse.from(productoRepository.save(producto), List.of());
     }
 
@@ -90,7 +92,6 @@ public class ProductoService {
         producto.setCodigo(request.codigo().trim());
         producto.setNombre(request.nombre().trim());
         producto.setDescripcion(request.descripcion());
-        producto.setPrecio(request.precio());
     }
 
     private Map<Long, List<StockAlmacenResponse>> stockPorProducto() {

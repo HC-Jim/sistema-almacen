@@ -1,28 +1,32 @@
 <header class="barra">
   <a routerLink="/" class="marca">SISTEMA DE ALMACÉN</a>
   <div class="usuario">
-    <span>{{ auth.sesion()?.nombre }} ({{ auth.sesion()?.username }})</span>
-    <a routerLink="/cambiar-password" class="btn btn-sec btn-chico">Cambiar contraseña</a>
+    <span>{{ auth.sesion()?.nombre }} · {{ rolNombre() }}</span>
     <button type="button" class="btn btn-sec btn-chico" (click)="auth.logout()">Cerrar sesión</button>
   </div>
 </header>
 
-<div class="cuerpo">
-  <nav class="menu" aria-label="Menú principal">
-    @for (grupo of menu(); track grupo.titulo) {
-      <p class="grupo">{{ grupo.titulo }}</p>
-      @for (enlace of grupo.enlaces; track enlace.ruta) {
-        <a
-          [routerLink]="enlace.ruta"
-          routerLinkActive="activo"
-          [routerLinkActiveOptions]="{ exact: enlace.exacto ?? false }"
-          >{{ enlace.texto }}</a
-        >
+@if (regresarA(); as destino) {
+  <nav class="navegacion" aria-label="Ubicación">
+    <a [routerLink]="destino" class="btn btn-sec btn-chico">← Regresar</a>
+    <ol class="migas">
+      <li><a routerLink="/">Inicio</a></li>
+      @if (modulo(); as m) {
+        <li>
+          @if (opcion()) {
+            <a [routerLink]="['/', m.id]">{{ m.titulo }}</a>
+          } @else {
+            <span aria-current="page">{{ m.titulo }}</span>
+          }
+        </li>
       }
-    }
+      @if (opcion(); as o) {
+        <li><span aria-current="page">{{ o.titulo }}</span></li>
+      }
+    </ol>
   </nav>
+}
 
-  <main class="contenido">
-    <router-outlet />
-  </main>
-</div>
+<main class="contenido">
+  <router-outlet />
+</main>

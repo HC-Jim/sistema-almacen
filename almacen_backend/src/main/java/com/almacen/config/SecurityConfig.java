@@ -28,6 +28,11 @@ import org.springframework.security.oauth2.server.resource.authentication.JwtAut
 import org.springframework.security.oauth2.server.resource.authentication.JwtGrantedAuthoritiesConverter;
 import org.springframework.security.web.SecurityFilterChain;
 
+import static com.almacen.config.Roles.ADMIN;
+import static com.almacen.config.Roles.ALMACEN;
+import static com.almacen.config.Roles.COMERCIAL;
+import static com.almacen.config.Roles.COMPRAS;
+
 import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
 import java.nio.charset.StandardCharsets;
@@ -36,7 +41,7 @@ import java.nio.charset.StandardCharsets;
  * Seguridad de la API:
  * - POST /api/auth/login es público y devuelve un token JWT.
  * - El resto de /api/** exige el encabezado "Authorization: Bearer <token>".
- * - /api/usuarios solo para el rol ADMIN (@PreAuthorize en el controlador).
+ * - Cada operación exige el rol de su área (ver {@link Roles}); ADMIN puede todo.
  * - Sin sesiones en el servidor (stateless).
  */
 @Configuration
@@ -54,12 +59,23 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/auth/login").permitAll()
                         .requestMatchers("/api/hola", "/error").permitAll()
+                        // Precios: área comercial. Datos del producto: logística.
+                        .requestMatchers(HttpMethod.PATCH, "/api/productos/*/precio").hasAnyRole(ADMIN, COMERCIAL)
+                        .requestMatchers(HttpMethod.POST, "/api/productos").hasAnyRole(ADMIN, COMPRAS, ALMACEN)
+                        .requestMatchers(HttpMethod.PUT, "/api/productos/*").hasAnyRole(ADMIN, COMPRAS, ALMACEN)
+                        .requestMatchers(HttpMethod.DELETE, "/api/productos/*").hasAnyRole(ADMIN, COMPRAS, ALMACEN)
+                        .requestMatchers("/api/ventas/**").hasAnyRole(ADMIN, COMERCIAL)
+                        .requestMatchers("/api/compras/**").hasAnyRole(ADMIN, COMPRAS)
+                        .requestMatchers("/api/traslados/**").hasAnyRole(ADMIN, ALMACEN)
+                        .requestMatchers("/api/usuarios/**").hasRole(ADMIN)
+                        // Consultas (productos, almacenes, movimientos): cualquier usuario conectado;
+                        // /api/movimientos filtra además por tipo según el rol.
                         .anyRequest().authenticated())
                 .oauth2ResourceServer(oauth2 -> oauth2.jwt(jwt -> jwt.jwtAuthenticationConverter(jwtAuthenticationConverter())));
         return http.build();
     }
 
-    /** El claim "scope" del token (ADMIN, VENDEDOR) se convierte en ROLE_ADMIN, ROLE_VENDEDOR para hasRole(...). */
+    /** El claim "scope" del token (ADMIN, COMERCIAL...) se convierte en ROLE_ADMIN, ROLE_COMERCIAL... para hasRole(...). */
     @Bean
     public JwtAuthenticationConverter jwtAuthenticationConverter() {
         JwtGrantedAuthoritiesConverter roles = new JwtGrantedAuthoritiesConverter();

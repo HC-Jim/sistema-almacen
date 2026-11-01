@@ -1,4 +1,12 @@
-export type Rol = 'ADMIN' | 'VENDEDOR';
+export type Rol = 'ADMIN' | 'COMERCIAL' | 'COMPRAS' | 'ALMACEN';
+
+/** Nombre del área que corresponde a cada rol. */
+export const ROL_NOMBRE: Record<Rol, string> = {
+  ADMIN: 'Administrador',
+  COMERCIAL: 'Comercial',
+  COMPRAS: 'Logística - Compras',
+  ALMACEN: 'Logística - Almacén',
+};
 
 /** Usuario tal como lo devuelve el backend (UsuarioResponse). */
 export interface Usuario {

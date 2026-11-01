@@ -46,25 +46,8 @@ class UsuarioServiceTest {
     }
 
     @Test
-    void cambiaLaContrasenaYLaGuardaCifrada() {
-        service.cambiarPassword("admin", "admin123", "una-clave-nueva");
-
-        assertThat(admin.getPassword()).startsWith("$2");
-        assertThat(encoder.matches("una-clave-nueva", admin.getPassword())).isTrue();
-        assertThat(encoder.matches("admin123", admin.getPassword())).isFalse();
-    }
-
-    @Test
-    void rechazaContrasenaActualIncorrecta() {
-        assertThatThrownBy(() -> service.cambiarPassword("admin", "equivocada", "una-clave-nueva"))
-                .isInstanceOf(ReglaNegocioException.class)
-                .hasMessageContaining("actual es incorrecta");
-        assertThat(encoder.matches("admin123", admin.getPassword())).isTrue();
-    }
-
-    @Test
     void creaUsuarioConContrasenaCifrada() {
-        var creado = service.crear(new UsuarioRequest(" ana ", "Ana Pérez", "VENDEDOR", "clave-de-ana"));
+        var creado = service.crear(new UsuarioRequest(" ana ", "Ana Pérez", "COMERCIAL", "clave-de-ana"));
 
         assertThat(creado.username()).isEqualTo("ana");
         assertThat(creado.activo()).isTrue();
@@ -74,7 +57,7 @@ class UsuarioServiceTest {
     void noPermiteUsuarioDuplicado() {
         when(repository.existsByUsername("admin")).thenReturn(true);
 
-        assertThatThrownBy(() -> service.crear(new UsuarioRequest("admin", "X", "VENDEDOR", "12345678")))
+        assertThatThrownBy(() -> service.crear(new UsuarioRequest("admin", "X", "COMERCIAL", "12345678")))
                 .isInstanceOf(ReglaNegocioException.class);
     }
 
@@ -91,17 +74,17 @@ class UsuarioServiceTest {
     void debeQuedarAlMenosUnAdministradorActivo() {
         when(repository.countByRolAndActivoTrue("ADMIN")).thenReturn(1L);
 
-        assertThatThrownBy(() -> service.actualizar(1L, new UsuarioUpdateRequest("Admin", "VENDEDOR", true), "otro"))
+        assertThatThrownBy(() -> service.actualizar(1L, new UsuarioUpdateRequest("Admin", "COMERCIAL", true), "otro"))
                 .isInstanceOf(ReglaNegocioException.class)
                 .hasMessageContaining("al menos un administrador");
     }
 
     @Test
     void desactivaYRestableceContrasenaDeOtroUsuario() {
-        Usuario vendedor = usuario(2L, "juan", "VENDEDOR", "clave-juan-1");
+        Usuario vendedor = usuario(2L, "juan", "COMERCIAL", "clave-juan-1");
         when(repository.findById(2L)).thenReturn(Optional.of(vendedor));
 
-        var actualizado = service.actualizar(2L, new UsuarioUpdateRequest("Juan", "VENDEDOR", false), "admin");
+        var actualizado = service.actualizar(2L, new UsuarioUpdateRequest("Juan", "COMERCIAL", false), "admin");
         service.restablecerPassword(2L, "clave-juan-2");
 
         assertThat(actualizado.activo()).isFalse();

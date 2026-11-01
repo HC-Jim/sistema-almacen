@@ -1,7 +1,7 @@
 <div class="pagina-titulo">
   <div>
     <h1>Usuarios</h1>
-    <p class="subtitulo">ADMIN puede todo; VENDEDOR no puede administrar usuarios.</p>
+    <p class="subtitulo">Comercial: precios y ventas. Compras: compras, productos y costos. Almacén: productos, traslados y movimientos. Administrador: todo.</p>
   </div>
 </div>
 
@@ -37,7 +37,7 @@
         Rol
         <select formControlName="rol">
           @for (r of roles; track r) {
-            <option [value]="r">{{ r }}</option>
+            <option [value]="r">{{ rolNombre[r] }}</option>
           }
         </select>
       </label>
@@ -92,7 +92,7 @@
                 }
               </td>
               <td>{{ u.nombre }}</td>
-              <td><span class="etiqueta" [class.etiqueta-llena]="u.rol === 'ADMIN'">{{ u.rol }}</span></td>
+              <td><span class="etiqueta" [class.etiqueta-llena]="u.rol === 'ADMIN'">{{ rolNombre[u.rol] }}</span></td>
               <td [class.muted]="!u.activo">{{ u.activo ? 'Activo' : 'Inactivo' }}</td>
               <td class="num">
                 <button type="button" class="btn btn-sec btn-chico" (click)="editar(u)">Editar</button>

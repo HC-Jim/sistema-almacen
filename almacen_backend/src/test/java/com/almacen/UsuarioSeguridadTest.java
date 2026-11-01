@@ -28,7 +28,6 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -71,12 +70,12 @@ class UsuarioSeguridadTest {
     }
 
     @Test
-    void vendedorNoPuedeAdministrarUsuarios() throws Exception {
-        String vendedor = token("juan", "VENDEDOR");
+    void comercialNoPuedeAdministrarUsuarios() throws Exception {
+        String comercial = token("juan", "COMERCIAL");
 
-        mockMvc.perform(get("/api/usuarios").header("Authorization", vendedor))
+        mockMvc.perform(get("/api/usuarios").header("Authorization", comercial))
                 .andExpect(status().isForbidden());
-        mockMvc.perform(post("/api/usuarios").header("Authorization", vendedor)
+        mockMvc.perform(post("/api/usuarios").header("Authorization", comercial)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("""
                                 {"username":"otro","nombre":"Otro","rol":"ADMIN","password":"12345678"}"""))
@@ -87,9 +86,6 @@ class UsuarioSeguridadTest {
     @Test
     void sinTokenDevuelve401() throws Exception {
         mockMvc.perform(get("/api/usuarios")).andExpect(status().isUnauthorized());
-        mockMvc.perform(put("/api/auth/password").contentType(MediaType.APPLICATION_JSON)
-                        .content("{\"actual\":\"admin123\",\"nueva\":\"nueva-clave\"}"))
-                .andExpect(status().isUnauthorized());
     }
 
     @Test
@@ -101,24 +97,5 @@ class UsuarioSeguridadTest {
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.errores.rol").exists())
                 .andExpect(jsonPath("$.errores.password").exists());
-    }
-
-    @Test
-    void cualquierUsuarioConectadoCambiaSuPropiaContrasena() throws Exception {
-        mockMvc.perform(put("/api/auth/password").header("Authorization", token("juan", "VENDEDOR"))
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content("{\"actual\":\"vieja-clave\",\"nueva\":\"nueva-clave\"}"))
-                .andExpect(status().isNoContent());
-        verify(usuarioService).cambiarPassword("juan", "vieja-clave", "nueva-clave");
-    }
-
-    @Test
-    void nuevaContrasenaDebeTenerAlMenos8Caracteres() throws Exception {
-        mockMvc.perform(put("/api/auth/password").header("Authorization", token("juan", "VENDEDOR"))
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content("{\"actual\":\"vieja-clave\",\"nueva\":\"1234567\"}"))
-                .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.errores.nueva").exists());
-        verify(usuarioService, never()).cambiarPassword(any(), any(), any());
     }
 }

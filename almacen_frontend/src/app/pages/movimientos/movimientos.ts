@@ -46,11 +46,11 @@ export class MovimientosLista implements OnInit {
   protected rutaNueva(): string | null {
     switch (this.tipo()) {
       case 'COMPRA':
-        return '/compras/nueva';
+        return '/logistica/compras/nueva';
       case 'VENTA':
-        return '/ventas/nueva';
+        return '/comercial/ventas/nueva';
       case 'TRASLADO':
-        return '/traslados/nuevo';
+        return '/logistica/traslados/nuevo';
       default:
         return null;
     }

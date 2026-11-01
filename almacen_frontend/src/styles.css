@@ -297,3 +297,31 @@ tr.detalle th {
   font-weight: 800;
   margin-top: 12px;
 }
+
+/* Tarjetas de menú (inicio y módulos) */
+.opciones-menu {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 12px;
+}
+
+.opcion {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 18px;
+  background: var(--blanco);
+  border: 2px solid var(--negro);
+  border-radius: var(--radio);
+  text-decoration: none;
+  color: var(--negro);
+}
+
+.opcion:hover {
+  background: var(--negro);
+  color: var(--blanco);
+}
+
+.opcion:hover .muted {
+  color: var(--gris-claro);
+}

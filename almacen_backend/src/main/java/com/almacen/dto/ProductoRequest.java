@@ -1,15 +1,12 @@
 package com.almacen.dto;
 
-import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
-import java.math.BigDecimal;
-
 /**
- * Datos editables de un producto. El stock y el costo no se envían:
- * el stock cambia solo con compras, ventas y traslados, y el costo solo con compras.
+ * Datos editables de un producto (logística). El stock, el costo y el precio no se envían:
+ * el stock cambia solo con compras, ventas y traslados, el costo solo con compras
+ * y el precio lo fija el área comercial (PATCH /api/productos/{id}/precio).
  */
 public record ProductoRequest(
         @NotBlank(message = "El código es obligatorio")
@@ -21,10 +18,6 @@ public record ProductoRequest(
         String nombre,
 
         @Size(max = 255, message = "La descripción admite máximo 255 caracteres")
-        String descripcion,
-
-        @NotNull(message = "El precio de venta es obligatorio")
-        @DecimalMin(value = "0.0", message = "El precio no puede ser negativo")
-        BigDecimal precio
+        String descripcion
 ) {
 }

@@ -1,5 +1,6 @@
 package com.almacen.dto;
 
+import com.almacen.config.Roles;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
@@ -16,7 +17,7 @@ public record UsuarioRequest(
         String nombre,
 
         @NotBlank(message = "El rol es obligatorio")
-        @Pattern(regexp = "ADMIN|VENDEDOR", message = "El rol debe ser ADMIN o VENDEDOR")
+        @Pattern(regexp = Roles.PATRON, message = "El rol debe ser ADMIN, COMERCIAL, COMPRAS o ALMACEN")
         String rol,
 
         @NotBlank(message = "La contraseña es obligatoria")

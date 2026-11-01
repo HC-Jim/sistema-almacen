@@ -1,5 +1,6 @@
 package com.almacen.dto;
 
+import com.almacen.config.Roles;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
@@ -12,7 +13,7 @@ public record UsuarioUpdateRequest(
         String nombre,
 
         @NotBlank(message = "El rol es obligatorio")
-        @Pattern(regexp = "ADMIN|VENDEDOR", message = "El rol debe ser ADMIN o VENDEDOR")
+        @Pattern(regexp = Roles.PATRON, message = "El rol debe ser ADMIN, COMERCIAL, COMPRAS o ALMACEN")
         String rol,
 
         @NotNull(message = "Indique si el usuario está activo")

@@ -3,6 +3,7 @@ import { computed, inject, Service, signal } from '@angular/core';
 import { Router } from '@angular/router';
 import { tap } from 'rxjs';
 import { environment } from '../../environments/environment';
+import { Rol } from '../models/usuario';
 
 export interface Sesion {
   token: string;
@@ -25,17 +26,19 @@ export class AuthService {
     const s = this.sesion();
     return s !== null && new Date(s.expiraEn).getTime() > Date.now();
   });
-  readonly esAdmin = computed(() => this.autenticado() && this.sesion()!.rol === 'ADMIN');
+  readonly rol = computed(() => (this.autenticado() ? (this.sesion()!.rol as Rol) : null));
+  readonly esAdmin = computed(() => this.rol() === 'ADMIN');
+
+  /** ADMIN puede todo; los demás solo lo de su área. */
+  puede(roles: readonly Rol[]): boolean {
+    const rol = this.rol();
+    return rol === 'ADMIN' || (rol !== null && roles.includes(rol));
+  }
 
   login(username: string, password: string) {
     return this.http
       .post<Sesion>(`${environment.apiUrl}/auth/login`, { username, password })
       .pipe(tap((sesion) => this.guardar(sesion)));
-  }
-
-  /** Cambia la contraseña del usuario conectado (el backend exige la actual). */
-  cambiarPassword(actual: string, nueva: string) {
-    return this.http.put<void>(`${environment.apiUrl}/auth/password`, { actual, nueva });
   }
 
   logout(): void {

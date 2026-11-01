@@ -38,7 +38,20 @@ Abre http://localhost:4200.
 
 ## Usuario inicial
 
-Al primer arranque se crea el usuario `admin` con rol ADMIN. Su contraseña inicial es `admin123`, o el valor de la variable `ADMIN_PASSWORD` si la defines. Cámbiala después de entrar.
+Al primer arranque se crea el usuario `admin` con rol ADMIN. Su contraseña inicial es `admin123`, o el valor de la variable `ADMIN_PASSWORD` si la defines. Los usuarios no cambian su propia contraseña: el administrador la asigna o restablece desde **Administración › Usuarios**.
+
+## Módulos y roles
+
+El menú principal muestra solo los módulos del rol del usuario. Cada pantalla tiene el botón **Regresar** para volver al nivel anterior.
+
+| Rol | Área | Puede |
+|---|---|---|
+| `COMERCIAL` | Comercial | Actualizar precios de venta, registrar y ver ventas |
+| `COMPRAS` | Logística | Registrar y ver compras, mantener productos, ver costos |
+| `ALMACEN` | Logística | Mantener productos, registrar y ver traslados, ver todos los movimientos |
+| `ADMIN` | Administración | Todo, incluida la gestión de usuarios |
+
+El backend aplica los mismos permisos: una petición fuera del rol recibe `403 Forbidden`.
 
 ## Variables de entorno
 

@@ -1,17 +1,28 @@
 import { Routes } from '@angular/router';
-import { adminGuard, authGuard, invitadoGuard } from './core/auth.guard';
+import { authGuard, invitadoGuard, rolGuard } from './core/auth.guard';
+import { MODULOS, rolesDelModulo } from './core/modulos';
 import { Shell } from './layout/shell';
-import { CambiarPassword } from './pages/cambiar-password/cambiar-password';
-import { CompraNueva } from './pages/compra-nueva/compra-nueva';
-import { Costos } from './pages/costos/costos';
 import { Inicio } from './pages/inicio/inicio';
 import { Login } from './pages/login/login';
-import { MovimientosLista } from './pages/movimientos/movimientos';
-import { Precios } from './pages/precios/precios';
-import { Productos } from './pages/productos/productos';
-import { TrasladoNuevo } from './pages/traslado-nuevo/traslado-nuevo';
-import { Usuarios } from './pages/usuarios/usuarios';
-import { VentaNueva } from './pages/venta-nueva/venta-nueva';
+import { ModuloPagina } from './pages/modulo/modulo';
+
+/** Cada módulo tiene su pantalla (/comercial) y sus opciones (/comercial/precios), protegidas por rol. */
+const rutasDeModulos: Routes = MODULOS.flatMap((m) => [
+  {
+    path: m.id,
+    component: ModuloPagina,
+    canActivate: [rolGuard],
+    title: m.titulo,
+    data: { modulo: m.id, roles: rolesDelModulo(m) },
+  },
+  ...m.opciones.map((o) => ({
+    path: `${m.id}/${o.ruta}`,
+    component: o.componente,
+    canActivate: [rolGuard],
+    title: o.titulo,
+    data: { ...o.datos, roles: o.roles },
+  })),
+]);
 
 export const routes: Routes = [
   { path: 'login', component: Login, canActivate: [invitadoGuard], title: 'Ingresar' },
@@ -19,31 +30,7 @@ export const routes: Routes = [
     path: '',
     component: Shell,
     canActivate: [authGuard],
-    children: [
-      { path: '', component: Inicio, title: 'Menú principal' },
-      { path: 'productos', component: Productos, title: 'Productos' },
-      { path: 'precios', component: Precios, title: 'Precios de venta' },
-      { path: 'costos', component: Costos, title: 'Costos' },
-      { path: 'compras/nueva', component: CompraNueva, title: 'Registrar compra' },
-      { path: 'compras', component: MovimientosLista, title: 'Compras', data: { tipo: 'COMPRA', titulo: 'Compras' } },
-      { path: 'ventas/nueva', component: VentaNueva, title: 'Registrar venta' },
-      { path: 'ventas', component: MovimientosLista, title: 'Ventas', data: { tipo: 'VENTA', titulo: 'Ventas' } },
-      { path: 'traslados/nuevo', component: TrasladoNuevo, title: 'Registrar traslado' },
-      {
-        path: 'traslados',
-        component: MovimientosLista,
-        title: 'Traslados',
-        data: { tipo: 'TRASLADO', titulo: 'Traslados internos' },
-      },
-      {
-        path: 'movimientos',
-        component: MovimientosLista,
-        title: 'Movimientos',
-        data: { tipo: null, titulo: 'Movimientos de inventario' },
-      },
-      { path: 'cambiar-password', component: CambiarPassword, title: 'Cambiar contraseña' },
-      { path: 'usuarios', component: Usuarios, canActivate: [adminGuard], title: 'Usuarios' },
-    ],
+    children: [{ path: '', component: Inicio, title: 'Menú principal' }, ...rutasDeModulos],
   },
   { path: '**', redirectTo: '' },
 ];

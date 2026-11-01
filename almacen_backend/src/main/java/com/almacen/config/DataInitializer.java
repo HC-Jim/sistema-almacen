@@ -45,6 +45,7 @@ public class DataInitializer implements CommandLineRunner {
         crearAlmacenes();
         crearCorrelativos();
         crearAdministrador();
+        migrarRolVendedor();
         asignarStockInicial();
     }
 
@@ -77,9 +78,19 @@ public class DataInitializer implements CommandLineRunner {
             admin.setUsername(adminUsername);
             admin.setPassword(passwordEncoder.encode(adminPassword));
             admin.setNombre("Administrador");
-            admin.setRol("ADMIN");
+            admin.setRol(Roles.ADMIN);
             usuarioRepository.save(admin);
             log.info("Se creó el usuario administrador '{}'", adminUsername);
+        }
+    }
+
+    /** El antiguo rol VENDEDOR pasó a llamarse COMERCIAL (área comercial: precios y ventas). */
+    private void migrarRolVendedor() {
+        for (Usuario usuario : usuarioRepository.findAll()) {
+            if ("VENDEDOR".equals(usuario.getRol())) {
+                usuario.setRol(Roles.COMERCIAL);
+                log.info("Usuario '{}' pasó del rol VENDEDOR a COMERCIAL", usuario.getUsername());
+            }
         }
     }
 

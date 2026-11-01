@@ -30,7 +30,6 @@ export class Productos implements OnInit {
     codigo: ['', [Validators.required, Validators.maxLength(30)]],
     nombre: ['', [Validators.required, Validators.maxLength(120)]],
     descripcion: ['', Validators.maxLength(255)],
-    precio: [0, [Validators.required, Validators.min(0)]],
   });
 
   ngOnInit(): void {
@@ -77,7 +76,6 @@ export class Productos implements OnInit {
       codigo: producto.codigo,
       nombre: producto.nombre,
       descripcion: producto.descripcion ?? '',
-      precio: producto.precio,
     });
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }

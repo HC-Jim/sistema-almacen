@@ -25,7 +25,6 @@ export interface ProductoRequest {
   codigo: string;
   nombre: string;
   descripcion: string | null;
-  precio: number;
 }
 
 export function stockEn(producto: Producto | undefined, almacenId: number | null): number {

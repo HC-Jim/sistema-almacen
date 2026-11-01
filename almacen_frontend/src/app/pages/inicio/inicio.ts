@@ -2,18 +2,13 @@ import { DecimalPipe } from '@angular/common';
 import { Component, computed, inject, OnInit, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { AuthService } from '../../core/auth';
+import { MODULOS } from '../../core/modulos';
 import { Almacen } from '../../models/almacen';
 import { Producto, stockEn } from '../../models/producto';
 import { AlmacenService } from '../../services/almacen';
 import { ProductoService } from '../../services/producto';
 
-interface Opcion {
-  ruta: string;
-  titulo: string;
-  detalle: string;
-}
-
-/** Menú principal: accesos a cada módulo y un resumen del inventario. */
+/** Menú principal: resumen del inventario y acceso a los módulos del rol del usuario. */
 @Component({
   imports: [RouterLink, DecimalPipe],
   selector: 'app-inicio',
@@ -33,17 +28,10 @@ export class Inicio implements OnInit {
   );
   protected readonly stockTotal = computed(() => this.productos().reduce((suma, p) => suma + p.stock, 0));
 
-  protected readonly opciones: Opcion[] = [
-    { ruta: '/productos', titulo: 'Productos', detalle: 'Registrar y actualizar productos' },
-    { ruta: '/precios', titulo: 'Precios de venta', detalle: 'Consultar y modificar precios' },
-    { ruta: '/costos', titulo: 'Costos', detalle: 'Costo promedio (solo lectura)' },
-    { ruta: '/compras/nueva', titulo: 'Registrar compra', detalle: 'Ingreso por orden de compra' },
-    { ruta: '/ventas/nueva', titulo: 'Registrar venta', detalle: 'Factura, boleta o ticket' },
-    { ruta: '/traslados/nuevo', titulo: 'Traslado interno', detalle: 'Entre almacenes' },
-    { ruta: '/compras', titulo: 'Ver compras', detalle: 'Historial de ingresos' },
-    { ruta: '/ventas', titulo: 'Ver ventas', detalle: 'Historial de egresos' },
-    { ruta: '/movimientos', titulo: 'Movimientos', detalle: 'Todos los movimientos' },
-  ];
+  /** Solo los módulos donde el rol del usuario tiene alguna opción. */
+  protected readonly modulos = computed(() =>
+    MODULOS.filter((m) => m.opciones.some((o) => this.auth.puede(o.roles))),
+  );
 
   ngOnInit(): void {
     this.productoService.listar().subscribe((data) => this.productos.set(data));

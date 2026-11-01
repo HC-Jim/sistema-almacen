@@ -2,7 +2,7 @@ import { Component, inject, OnInit, signal } from '@angular/core';
 import { NonNullableFormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { AuthService } from '../../core/auth';
 import { mensajeError } from '../../core/errores';
-import { Rol, Usuario } from '../../models/usuario';
+import { Rol, ROL_NOMBRE, Usuario } from '../../models/usuario';
 import { UsuarioService } from '../../services/usuario';
 
 /** Administración de usuarios: alta, edición de nombre/rol, activar/desactivar y restablecer contraseña. */
@@ -22,13 +22,14 @@ export class Usuarios implements OnInit {
   protected readonly exito = signal<string | null>(null);
   protected readonly editandoId = signal<number | null>(null);
 
-  protected readonly roles: Rol[] = ['VENDEDOR', 'ADMIN'];
+  protected readonly roles: Rol[] = ['COMERCIAL', 'COMPRAS', 'ALMACEN', 'ADMIN'];
+  protected readonly rolNombre = ROL_NOMBRE;
 
   /** Al editar, el usuario no cambia y la contraseña se restablece aparte. */
   protected readonly form = this.fb.group({
     username: ['', [Validators.required, Validators.maxLength(50), Validators.pattern(/^[A-Za-z0-9._-]+$/)]],
     nombre: ['', [Validators.required, Validators.maxLength(100)]],
-    rol: this.fb.control<Rol>('VENDEDOR', Validators.required),
+    rol: this.fb.control<Rol>('COMERCIAL', Validators.required),
     password: ['', [Validators.required, Validators.minLength(8), Validators.maxLength(72)]],
   });
 

@@ -1,16 +1,13 @@
 package com.almacen.controller;
 
-import com.almacen.dto.CambioPasswordRequest;
 import com.almacen.dto.LoginRequest;
 import com.almacen.dto.LoginResponse;
 import com.almacen.entity.Usuario;
 import com.almacen.exception.RecursoNoEncontradoException;
 import com.almacen.repository.UsuarioRepository;
-import com.almacen.service.UsuarioService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -21,10 +18,8 @@ import org.springframework.security.oauth2.jwt.JwtEncoder;
 import org.springframework.security.oauth2.jwt.JwtEncoderParameters;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.time.Duration;
@@ -39,7 +34,6 @@ public class AuthController {
     private final AuthenticationManager authenticationManager;
     private final UsuarioRepository usuarioRepository;
     private final JwtEncoder jwtEncoder;
-    private final UsuarioService usuarioService;
 
     @Value("${app.jwt.horas:8}")
     private long horasValidez;
@@ -72,13 +66,6 @@ public class AuthController {
     public Map<String, String> me(Authentication auth) {
         Usuario usuario = buscar(auth.getName());
         return Map.of("username", usuario.getUsername(), "nombre", usuario.getNombre(), "rol", usuario.getRol());
-    }
-
-    /** El usuario conectado cambia su propia contraseña. */
-    @PutMapping("/password")
-    @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void cambiarPassword(@Valid @RequestBody CambioPasswordRequest request, Authentication auth) {
-        usuarioService.cambiarPassword(auth.getName(), request.actual(), request.nueva());
     }
 
     private Usuario buscar(String username) {
